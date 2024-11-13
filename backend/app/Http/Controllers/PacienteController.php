@@ -3,62 +3,71 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Paciente;
 
 class PacienteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $query = Paciente::query();
+        
+        if (request()->has('with')) {
+            $query->with(explode(',', request()->with));
+        }
+        
+        if (request()->has('nombre')) {
+            $query->where('nombre', 'like', '%' . request()->nombre . '%');
+        }
+        
+        if (request()->has('activo')) {
+            $query->where('activo', request()->activo);
+        }
+        
+        return $query->get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'propietario_id' => 'required|exists:propietarios,id',
+            'especie_id' => 'required|exists:especies,id',
+            'nombre' => 'required|string|max:255',
+            'fecha_nacimiento' => 'nullable|date',
+            'sexo' => 'nullable|string|in:Macho,Hembra',
+            'peso' => 'nullable|numeric|min:0',
+            'activo' => 'boolean'
+        ]);
+
+        return Paciente::create($validated);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Paciente $paciente)
     {
-        //
+        if (request()->has('with')) {
+            $paciente->load(explode(',', request()->with));
+        }
+        return $paciente;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Paciente $paciente)
     {
-        //
+        $validated = $request->validate([
+            'propietario_id' => 'sometimes|required|exists:propietarios,id',
+            'especie_id' => 'sometimes|required|exists:especies,id',
+            'nombre' => 'sometimes|required|string|max:255',
+            'fecha_nacimiento' => 'nullable|date',
+            'sexo' => 'nullable|string|in:Macho,Hembra',
+            'peso' => 'nullable|numeric|min:0',
+            'activo' => 'boolean'
+        ]);
+
+        $paciente->update($validated);
+        return $paciente;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Paciente $paciente)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $paciente->delete();
+        return response()->noContent();
     }
 }

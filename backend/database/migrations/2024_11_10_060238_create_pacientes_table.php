@@ -12,7 +12,6 @@ class CreatePacientesTable extends Migration
             $table->id();
             $table->foreignId('propietario_id')->constrained('propietarios')->onDelete('cascade');
             $table->foreignId('especie_id')->constrained('especies');
-            $table->foreignId('raza_id')->nullable()->constrained('razas');
             $table->string('nombre');
             $table->date('fecha_nacimiento')->nullable();
             $table->char('sexo', 1)->nullable();

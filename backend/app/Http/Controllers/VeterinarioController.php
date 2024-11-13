@@ -3,62 +3,56 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Veterinario;
 
 class VeterinarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return Veterinario::when(request()->has('activo'), function($query) {
+            return $query->where('activo', request()->activo);
+        })->get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'especialidad' => 'nullable|string|max:255',
+            'num_licencia' => 'required|string|unique:veterinarios,num_licencia',
+            'email' => 'nullable|email|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'activo' => 'boolean'
+        ]);
+
+        return Veterinario::create($validated);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Veterinario $veterinario)
     {
-        //
+        return $veterinario->load('citas');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Veterinario $veterinario)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'sometimes|required|string|max:255',
+            'apellido' => 'sometimes|required|string|max:255',
+            'especialidad' => 'nullable|string|max:255',
+            'num_licencia' => 'sometimes|required|string|unique:veterinarios,num_licencia,' . $veterinario->id,
+            'email' => 'nullable|email|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'activo' => 'boolean'
+        ]);
+
+        $veterinario->update($validated);
+        return $veterinario;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Veterinario $veterinario)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $veterinario->delete();
+        return response()->noContent();
     }
 }

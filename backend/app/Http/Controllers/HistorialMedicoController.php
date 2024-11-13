@@ -3,62 +3,48 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\HistorialMedico;
 
 class HistorialMedicoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return HistorialMedico::with('paciente')->get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'alergias' => 'nullable|string',
+            'condiciones_cronicas' => 'nullable|string',
+            'cirugias_previas' => 'nullable|string'
+        ]);
+
+        return HistorialMedico::create($validated);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(HistorialMedico $historialMedico)
     {
-        //
+        return $historialMedico->load('paciente');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, HistorialMedico $historialMedico)
     {
-        //
+        $validated = $request->validate([
+            'paciente_id' => 'sometimes|required|exists:pacientes,id',
+            'alergias' => 'nullable|string',
+            'condiciones_cronicas' => 'nullable|string',
+            'cirugias_previas' => 'nullable|string'
+        ]);
+
+        $historialMedico->update($validated);
+        return $historialMedico;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(HistorialMedico $historialMedico)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $historialMedico->delete();
+        return response()->noContent();
     }
 }

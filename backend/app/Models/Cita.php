@@ -2,33 +2,43 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cita extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'paciente_id',
+        'veterinario_id',
+        'tipo_cita_id',
+        'fecha_hora',
+        'estado',
+        'motivo',
+        'notas'
+    ];
 
-    protected $fillable = ['fecha_hora', 'estado', 'motivo', 'notas', 'paciente_id', 'veterinario_id', 'tipo_cita_id'];
+    protected $casts = [
+        'fecha_hora' => 'datetime'
+    ];
 
-    public function paciente()
+    public function paciente(): BelongsTo
     {
         return $this->belongsTo(Paciente::class);
     }
 
-    public function veterinario()
+    public function veterinario(): BelongsTo
     {
         return $this->belongsTo(Veterinario::class);
     }
 
-    public function tipoCita()
+    public function tipoCita(): BelongsTo
     {
         return $this->belongsTo(TipoCita::class);
     }
 
-    public function procedimientos()
+    public function procedimientos(): HasMany
     {
         return $this->hasMany(Procedimiento::class);
     }
 }
-

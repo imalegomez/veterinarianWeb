@@ -2,18 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HistorialMedico extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'paciente_id',
+        'alergias',
+        'condiciones_cronicas',
+        'cirugias_previas',
+        'ultima_actualizacion'
+    ];
 
-    protected $fillable = ['alergias', 'condiciones_cronicas', 'cirugias_previas', 'ultima_actualizacion', 'paciente_id'];
+    protected $casts = [
+        'ultima_actualizacion' => 'datetime'
+    ];
 
-    public function paciente()
+    public function paciente(): BelongsTo
     {
         return $this->belongsTo(Paciente::class);
     }
 }
-
