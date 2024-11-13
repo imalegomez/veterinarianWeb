@@ -35,38 +35,38 @@ export default function PanelVeterinario() {
               <SelectContent>
                 <SelectItem value="1">Perro</SelectItem>
                 <SelectItem value="2">Gato</SelectItem>
-                <SelectItem value="3">Ave</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          <div>
-            <Label htmlFor="raza">Raza</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione raza" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Golden Retriever</SelectItem>
-                <SelectItem value="2">Siamés</SelectItem>
-                <SelectItem value="3">Bulldog</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="propietario">Propietario</Label>
-            <Input id="propietario" required />
           </div>
           <div>
             <Label htmlFor="fecha_nacimiento">Fecha de Nacimiento</Label>
             <Input id="fecha_nacimiento" type="date" required />
           </div>
           <div>
-            <Label htmlFor="telefono">Teléfono de Contacto</Label>
-            <Input id="telefono" type="tel" required />
+            <Label htmlFor="sexo">Sexo</Label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccione sexo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="M">Macho</SelectItem>
+                <SelectItem value="H">Hembra</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
-            <Label htmlFor="email">Email de Contacto</Label>
-            <Input id="email" type="email" required />
+            <Label htmlFor="peso">Peso (kg)</Label>
+            <Input id="peso" type="number" step="0.1" required />
+          </div>
+          <div>
+            <Label htmlFor="propietario">Datos del Propietario</Label>
+            <div className="space-y-2">
+              <Input placeholder="Nombre" required />
+              <Input placeholder="Apellido" required />
+              <Input placeholder="Teléfono" type="tel" />
+              <Input placeholder="Email" type="email" />
+              <Input placeholder="Dirección" />
+            </div>
           </div>
           <div className="flex justify-end space-x-2">
             <DialogClose asChild>
@@ -92,9 +92,7 @@ export default function PanelVeterinario() {
                 <SelectValue placeholder="Seleccione paciente" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Max - Golden Retriever</SelectItem>
-                <SelectItem value="2">Luna - Siamés</SelectItem>
-                <SelectItem value="3">Rocky - Bulldog</SelectItem>
+                <SelectItem value="1">Max - Perro</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -105,8 +103,7 @@ export default function PanelVeterinario() {
                 <SelectValue placeholder="Seleccione veterinario" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Dr. García</SelectItem>
-                <SelectItem value="2">Dra. Rodríguez</SelectItem>
+                <SelectItem value="1">Juan Pérez</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -119,13 +116,18 @@ export default function PanelVeterinario() {
               <SelectContent>
                 <SelectItem value="1">Consulta General</SelectItem>
                 <SelectItem value="2">Vacunación</SelectItem>
-                <SelectItem value="3">Control</SelectItem>
+                <SelectItem value="3">Revisión</SelectItem>
+                <SelectItem value="4">Cirugía</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
             <Label htmlFor="fecha_hora">Fecha y Hora</Label>
             <Input id="fecha_hora" type="datetime-local" required />
+          </div>
+          <div>
+            <Label htmlFor="motivo">Motivo</Label>
+            <Input id="motivo" required />
           </div>
           <div>
             <Label htmlFor="notas">Notas</Label>
@@ -142,7 +144,7 @@ export default function PanelVeterinario() {
     },
     { 
       icon: Folder, 
-      label: 'Registro Médico', 
+      label: 'Historial Médico', 
       color: 'bg-yellow-500', 
       hoverColor: 'hover:bg-yellow-600', 
       tag: 'Seguro',
@@ -155,98 +157,65 @@ export default function PanelVeterinario() {
                 <SelectValue placeholder="Seleccione paciente" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Max - Golden Retriever</SelectItem>
-                <SelectItem value="2">Luna - Siamés</SelectItem>
-                <SelectItem value="3">Rocky - Bulldog</SelectItem>
+                <SelectItem value="1">Max - Perro</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label htmlFor="veterinario">Veterinario</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione veterinario" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Dr. García</SelectItem>
-                <SelectItem value="2">Dra. Rodríguez</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="alergias">Alergias</Label>
+            <Textarea id="alergias" />
           </div>
           <div>
-            <Label htmlFor="fecha">Fecha</Label>
-            <Input id="fecha" type="date" required />
+            <Label htmlFor="condiciones_cronicas">Condiciones Crónicas</Label>
+            <Textarea id="condiciones_cronicas" />
           </div>
           <div>
-            <Label htmlFor="diagnostico">Diagnóstico</Label>
-            <Textarea id="diagnostico" required />
-          </div>
-          <div>
-            <Label htmlFor="tratamiento">Tratamiento</Label>
-            <Textarea id="tratamiento" required />
-          </div>
-          <div>
-            <Label htmlFor="notas">Notas</Label>
-            <Textarea id="notas" />
+            <Label htmlFor="cirugias_previas">Cirugías Previas</Label>
+            <Textarea id="cirugias_previas" />
           </div>
           <div className="flex justify-end space-x-2">
             <DialogClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Guardar Registro</Button>
+            <Button type="submit">Guardar Historial</Button>
           </div>
         </div>
       )
     },
     { 
       icon: Syringe, 
-      label: 'Vacunación', 
+      label: 'Registrar Vacuna', 
       color: 'bg-purple-500', 
       hoverColor: 'hover:bg-purple-600', 
       tag: 'Importante',
       content: (
         <div className="space-y-4">
           <div>
-            <Label htmlFor="paciente">Paciente</Label>
+            <Label htmlFor="procedimiento">Procedimiento</Label>
             <Select>
               <SelectTrigger>
-                <SelectValue placeholder="Seleccione paciente" />
+                <SelectValue placeholder="Seleccione procedimiento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Max - Golden Retriever</SelectItem>
-                <SelectItem value="2">Luna - Siamés</SelectItem>
-                <SelectItem value="3">Rocky - Bulldog</SelectItem>
+                <SelectItem value="1">Vacunación #1</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label htmlFor="veterinario">Veterinario</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione veterinario" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Dr. García</SelectItem>
-                <SelectItem value="2">Dra. Rodríguez</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="nombre_vacuna">Nombre de la Vacuna</Label>
+            <Input id="nombre_vacuna" required />
           </div>
           <div>
-            <Label htmlFor="fecha">Fecha</Label>
-            <Input id="fecha" type="date" required />
+            <Label htmlFor="lote">Número de Lote</Label>
+            <Input id="lote" />
           </div>
           <div>
-            <Label htmlFor="tipo_vacuna">Tipo de Vacuna</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione vacuna" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Parvovirus</SelectItem>
-                <SelectItem value="2">Rabia</SelectItem>
-                <SelectItem value="3">Moquillo</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="fecha_aplicacion">Fecha de Aplicación</Label>
+            <Input id="fecha_aplicacion" type="date" required />
+          </div>
+          <div>
+            <Label htmlFor="fecha_proxima">Próxima Aplicación</Label>
+            <Input id="fecha_proxima" type="date" />
           </div>
           <div>
             <Label htmlFor="notas">Notas</Label>
@@ -256,73 +225,74 @@ export default function PanelVeterinario() {
             <DialogClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Registrar Vacunación</Button>
+            <Button type="submit">Registrar Vacuna</Button>
           </div>
         </div>
       )
     },
     { 
       icon: Stethoscope, 
-      label: 'Examen Físico', 
+      label: 'Procedimiento', 
       color: 'bg-red-500', 
       hoverColor: 'hover:bg-red-600', 
       tag: 'Detallado',
       content: (
         <div className="space-y-4">
           <div>
-            <Label htmlFor="paciente">Paciente</Label>
+            <Label htmlFor="cita">Cita</Label>
             <Select>
               <SelectTrigger>
-                <SelectValue placeholder="Seleccione paciente" />
+                <SelectValue placeholder="Seleccione cita" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Max - Golden Retriever</SelectItem>
-                <SelectItem value="2">Luna - Siamés</SelectItem>
-                <SelectItem value="3">Rocky - Bulldog</SelectItem>
+                <SelectItem value="1">Cita #1 - Max</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label htmlFor="veterinario">Veterinario</Label>
+            <Label htmlFor="tipo">Tipo de Procedimiento</Label>
             <Select>
               <SelectTrigger>
-                <SelectValue placeholder="Seleccione veterinario" />
+                <SelectValue placeholder="Seleccione tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Dr. García</SelectItem>
-                <SelectItem value="2">Dra. Rodríguez</SelectItem>
+                <SelectItem value="Vacunación">Vacunación</SelectItem>
+                <SelectItem value="Cirugía">Cirugía</SelectItem>
+                <SelectItem value="Revisión">Revisión</SelectItem>
+                <SelectItem value="Tratamiento">Tratamiento</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label htmlFor="fecha">Fecha</Label>
-            <Input id="fecha" type="date" required />
+            <Label htmlFor="descripcion">Descripción</Label>
+            <Textarea id="descripcion" required />
           </div>
           <div>
-            <Label htmlFor="peso">Peso (kg)</Label>
-            <Input id="peso" type="number" step="0.1" required />
+            <Label htmlFor="estado">Estado</Label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccione estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Completado">Completado</SelectItem>
+                <SelectItem value="En proceso">En proceso</SelectItem>
+                <SelectItem value="Pendiente">Pendiente</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
-            <Label htmlFor="temperatura">Temperatura (°C)</Label>
-            <Input id="temperatura" type="number" step="0.1" required />
+            <Label htmlFor="costo">Costo</Label>
+            <Input id="costo" type="number" step="0.01" />
           </div>
           <div>
-            <Label htmlFor="frecuencia_cardiaca">Frecuencia Cardíaca</Label>
-            <Input id="frecuencia_cardiaca" type="number" required />
-          </div>
-          <div>
-            <Label htmlFor="frecuencia_respiratoria">Frecuencia Respiratoria</Label>
-            <Input id="frecuencia_respiratoria" type="number" required />
-          </div>
-          <div>
-            <Label htmlFor="observaciones">Observaciones</Label>
-            <Textarea id="observaciones" required />
+            <Label htmlFor="notas_medicas">Notas Médicas</Label>
+            <Textarea id="notas_medicas" />
           </div>
           <div className="flex justify-end space-x-2">
             <DialogClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Guardar Examen</Button>
+            <Button type="submit">Guardar Procedimiento</Button>
           </div>
         </div>
       )
