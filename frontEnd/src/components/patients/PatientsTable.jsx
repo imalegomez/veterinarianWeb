@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "./StatusBadge"
-import { SpeciesBadge } from "./SpeciesBadge"
+import { SpeciesBadge } from "./SpecialBadge"
 import { TableSkeleton } from "./TableSkeleton"
 import { PatientActions } from "./PatientActions"
 
