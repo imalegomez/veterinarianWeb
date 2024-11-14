@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import PanelVeterinario from './components/PanelVeterinario'
-import Pacientes from './components/Pacientes'
+import Pacientes from './pages/Pacientes'
 import Citas from './components/Citas'
 import RegistrosMedicos from './components/RegistrosMedicos'
 
