@@ -8,10 +8,131 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+
+const api = axios.create({
+  baseURL: 'http://localhost:8000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  }
+})
 
 export default function PanelVeterinario() {
   const [openDialog, setOpenDialog] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
+  const [stats, setStats] = useState({
+    totalPatients: 0,
+    todayAppointments: 0,
+    weeklyVaccinations: 0
+  })
+  const [recentPatients, setRecentPatients] = useState([])
+  const [upcomingAppointments, setUpcomingAppointments] = useState([])
+  const [especies, setEspecies] = useState([])
+  const [formValues, setFormValues] = useState({
+    // Datos del propietario
+    nombre: '',
+    apellido: '',
+    telefono: '',
+    email: '',
+    direccion: '',
+    // Datos de la mascota
+    paciente: {
+      nombre: '',
+      especie_id: '',
+      fecha_nacimiento: '',
+      sexo: '',
+      peso: ''
+    }
+  })
+
+  useEffect(() => {
+    const fetchEspecies = async () => {
+      try {
+        const response = await api.get('/especies')
+        setEspecies(response.data)
+      } catch (error) {
+        console.error('Error fetching especies:', error)
+      }
+    }
+    
+    fetchEspecies()
+  }, [])
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    if (name.startsWith('paciente_')) {
+      const pacienteField = name.replace('paciente_', '')
+      setFormValues(prev => ({
+        ...prev,
+        paciente: {
+          ...prev.paciente,
+          [pacienteField]: value
+        }
+      }))
+    } else {
+      setFormValues(prev => ({
+        ...prev,
+        [name]: value
+      }))
+    }
+  }
+
+  const handleNewPatient = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError("")
+    
+    try {
+      // 1. Primero crear el propietario
+      const propietarioData = {
+        nombre: formValues.nombre,
+        apellido: formValues.apellido,
+        telefono: formValues.telefono,
+        email: formValues.email,
+        direccion: formValues.direccion
+      }
+      
+      const propietarioResponse = await api.post('/propietarios', propietarioData)
+      const propietarioId = propietarioResponse.data.id
+      
+      // 2. Luego crear la mascota asociada al propietario
+      const pacienteData = {
+        nombre: formValues.paciente.nombre,
+        especie_id: parseInt(formValues.paciente.especie_id),
+        propietario_id: propietarioId,
+        fecha_nacimiento: formValues.paciente.fecha_nacimiento,
+        sexo: formValues.paciente.sexo,
+        peso: parseFloat(formValues.paciente.peso)
+      }
+      
+      await api.post('/pacientes', pacienteData)
+      
+      // Limpiar el formulario y cerrar el diálogo
+      setFormValues({
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        email: '',
+        direccion: '',
+        paciente: {
+          nombre: '',
+          especie_id: '',
+          fecha_nacimiento: '',
+          sexo: '',
+          peso: ''
+        }
+      })
+      setOpenDialog("")
+      
+    } catch (error) {
+      console.error('Error creating patient:', error)
+      setError(error.response?.data?.message || 'Error al crear el paciente')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const quickActions = [
     { 
@@ -21,60 +142,162 @@ export default function PanelVeterinario() {
       hoverColor: 'hover:bg-green-600', 
       tag: 'Nuevo',
       content: (
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="nombre">Nombre de la Mascota</Label>
-            <Input id="nombre" required />
-          </div>
-          <div>
-            <Label htmlFor="especie">Especie</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione especie" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Perro</SelectItem>
-                <SelectItem value="2">Gato</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="fecha_nacimiento">Fecha de Nacimiento</Label>
-            <Input id="fecha_nacimiento" type="date" required />
-          </div>
-          <div>
-            <Label htmlFor="sexo">Sexo</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione sexo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="M">Macho</SelectItem>
-                <SelectItem value="H">Hembra</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="peso">Peso (kg)</Label>
-            <Input id="peso" type="number" step="0.1" required />
-          </div>
-          <div>
-            <Label htmlFor="propietario">Datos del Propietario</Label>
-            <div className="space-y-2">
-              <Input placeholder="Nombre" required />
-              <Input placeholder="Apellido" required />
-              <Input placeholder="Teléfono" type="tel" />
-              <Input placeholder="Email" type="email" />
-              <Input placeholder="Dirección" />
+        <form onSubmit={handleNewPatient} className="space-y-4">
+          {error && (
+            <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
+          
+          <div className="space-y-4">
+            <h3 className="font-medium">Datos del Propietario</h3>
+            <div>
+              <Label htmlFor="nombre">Nombre</Label>
+              <Input 
+                id="nombre" 
+                name="nombre" 
+                value={formValues.nombre}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="apellido">Apellido</Label>
+              <Input 
+                id="apellido" 
+                name="apellido"
+                value={formValues.apellido}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input 
+                id="telefono" 
+                name="telefono"
+                type="tel"
+                value={formValues.telefono}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                id="email" 
+                name="email"
+                type="email"
+                value={formValues.email}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="direccion">Dirección</Label>
+              <Input 
+                id="direccion" 
+                name="direccion"
+                value={formValues.direccion}
+                onChange={handleInputChange}
+                required 
+              />
             </div>
           </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Datos de la Mascota</h3>
+            <div>
+              <Label htmlFor="paciente_nombre">Nombre de la Mascota</Label>
+              <Input 
+                id="paciente_nombre" 
+                name="paciente_nombre" 
+                value={formValues.paciente.nombre}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="paciente_especie_id">Especie</Label>
+              <Select 
+                name="paciente_especie_id" 
+                value={formValues.paciente.especie_id}
+                onValueChange={(value) => setFormValues(prev => ({
+                  ...prev,
+                  paciente: {
+                    ...prev.paciente,
+                    especie_id: value
+                  }
+                }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione especie" />
+                </SelectTrigger>
+                <SelectContent>
+                  {especies.map(especie => (
+                    <SelectItem key={especie.id} value={especie.id.toString()}>
+                      {especie.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="paciente_fecha_nacimiento">Fecha de Nacimiento</Label>
+              <Input 
+                id="paciente_fecha_nacimiento" 
+                name="paciente_fecha_nacimiento"
+                type="date" 
+                value={formValues.paciente.fecha_nacimiento}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="paciente_sexo">Sexo</Label>
+              <Select 
+                name="paciente_sexo" 
+                value={formValues.paciente.sexo}
+                onValueChange={(value) => setFormValues(prev => ({
+                  ...prev,
+                  paciente: {
+                    ...prev.paciente,
+                    sexo: value
+                  }
+                }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione sexo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Macho">Macho</SelectItem>
+                  <SelectItem value="Hembra">Hembra</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="paciente_peso">Peso (kg)</Label>
+              <Input 
+                id="paciente_peso" 
+                name="paciente_peso"
+                type="number" 
+                step="0.1" 
+                value={formValues.paciente.peso}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+          </div>
+
           <div className="flex justify-end space-x-2">
             <DialogClose asChild>
-              <Button variant="outline">Cancelar</Button>
+              <Button variant="outline" type="button">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Guardar Paciente</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Guardando...' : 'Guardar Paciente'}
+            </Button>
           </div>
-        </div>
+        </form>
       )
     },
     { 
