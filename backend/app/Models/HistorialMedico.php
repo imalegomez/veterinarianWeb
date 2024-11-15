@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HistorialMedico extends Model
 {
+
+    protected $table = 'historial_medico';
     protected $fillable = [
         'paciente_id',
         'alergias',

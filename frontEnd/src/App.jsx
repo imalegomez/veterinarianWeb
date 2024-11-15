@@ -109,20 +109,7 @@ export default function App() {
                 >
                   <Menu size={24} />
                 </button>
-                <div className="relative">
-                  <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors duration-200 ${
-                    searchFocused ? 'text-blue-500' : 'text-gray-400'
-                  }`} size={20} />
-                  <Input 
-                    type="text" 
-                    placeholder="Buscar pacientes..." 
-                    className={`w-64 pl-10 transition-all duration-200 ${
-                      searchFocused ? 'ring-2 ring-blue-500 border-blue-500' : ''
-                    }`}
-                    onFocus={() => setSearchFocused(true)}
-                    onBlur={() => setSearchFocused(false)}
-                  />
-                </div>
+                
               </div>
               
               <div className="flex items-center gap-4">

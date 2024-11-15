@@ -8,6 +8,7 @@ use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\HistorialMedicoController;
 use App\Http\Controllers\EspecieController;
+use App\Http\Controllers\TipoCitaController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('propietarios', PropietarioController::class);
@@ -17,9 +18,10 @@ Route::apiResource('veterinarios', VeterinarioController::class);
 Route::apiResource('citas', CitaController::class);
 Route::apiResource('procedimientos', ProcedimientoController::class);
 Route::apiResource('vacunas', VacunaController::class);
-Route::apiResource('historial-medico', HistorialMedicoController::class);
+Route::apiResource('historial_medico', HistorialMedicoController::class);
+Route::apiResource('tipo_citas', TipoCitaController::class);
 
 // Rutas adicionales específicas
-Route::get('pacientes/{paciente}/historial', [PacienteController::class, 'historial']);
+//Route::get('pacientes/{paciente}/historial', [PacienteController::class, 'historial']);
 Route::get('veterinarios/{veterinario}/citas', [VeterinarioController::class, 'citas']);
 Route::get('propietarios/{propietario}/pacientes', [PropietarioController::class, 'pacientes']);
