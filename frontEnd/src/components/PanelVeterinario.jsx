@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import { api } from '@/service/api'
 
 export default function PanelVeterinario() {
@@ -35,16 +34,15 @@ export default function PanelVeterinario() {
     fecha_hora: '',
     motivo: '',
     notas: '',
-    estado: '' // Add estado (status) field
+    estado: ''
   })
   const [formValues, setFormValues] = useState({
-    // Datos del propietario
+    
     nombre: '',
     apellido: '',
     telefono: '',
     email: '',
     direccion: '',
-    // Datos de la mascota
     paciente: {
       nombre: '',
       especie_id: '',
@@ -98,7 +96,6 @@ export default function PanelVeterinario() {
     setError("")
     
     try {
-      // 1. Primero crear el propietario
       const propietarioData = {
         nombre: formValues.nombre,
         apellido: formValues.apellido,
@@ -110,7 +107,6 @@ export default function PanelVeterinario() {
       const propietarioResponse = await api.post('/propietarios', propietarioData)
       const propietarioId = propietarioResponse.data.id
       
-      // 2. Luego crear la mascota asociada al propietario
       const pacienteData = {
         nombre: formValues.paciente.nombre,
         especie_id: parseInt(formValues.paciente.especie_id),
@@ -122,7 +118,6 @@ export default function PanelVeterinario() {
       
       await api.post('/pacientes', pacienteData)
       
-      // Limpiar el formulario y cerrar el diálogo
       setFormValues({
         nombre: '',
         apellido: '',
@@ -159,13 +154,13 @@ export default function PanelVeterinario() {
           api.get('/especies'),
           api.get('/pacientes'),
           api.get('/veterinarios'),
-          api.get('/tipo_citas') // Nuevo endpoint
+          api.get('/tipo_citas')
         ])
         
         setEspecies(especiesRes.data)
         setPacientes(pacientesRes.data)
         setVeterinarios(veterinariosRes.data)
-        setTiposCita(tiposCitaRes.data) // Guardamos los tipos de cita en el estado
+        setTiposCita(tiposCitaRes.data)
       } catch (error) {
         console.error('Error fetching initial data:', error)
       }
@@ -188,7 +183,6 @@ export default function PanelVeterinario() {
         cirugias_previas: historialForm.cirugias_previas,        
       };
 
-      // Corregir el endpoint para usar el nombre correcto de la tabla
       const response = await api.post('/historial_medico', historialData);
 
       setHistorialForm({
@@ -227,7 +221,7 @@ export default function PanelVeterinario() {
         fecha_hora: new Date(appointmentForm.fecha_hora).toISOString(),
         motivo: appointmentForm.motivo,
         notas: appointmentForm.notas || '',
-        estado: 'Programada' // Add estado to the submission
+        estado: 'Programada'
       }
 
       if (!appointmentData.paciente_id || !appointmentData.veterinario_id || 
@@ -456,11 +450,14 @@ export default function PanelVeterinario() {
                 <SelectValue placeholder="Seleccione paciente" />
               </SelectTrigger>
               <SelectContent>
-                {pacientes.map(paciente => (
-                  <SelectItem key={paciente.id} value={paciente.id.toString()}>
-                    {paciente.nombre} - {paciente.especie_nombre}
-                  </SelectItem>
-                ))}
+                {pacientes.map(paciente => {
+                  const especie = especies.find(esp => esp.id === paciente.especie_id);
+                  return(
+                    <SelectItem key={paciente.id} value={paciente.id.toString()}>
+                      {paciente.nombre} - {especie ? especie.nombre : 'Especie no encontrada'}
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -571,12 +568,15 @@ export default function PanelVeterinario() {
                   <SelectValue placeholder="Seleccione paciente" />
                 </SelectTrigger>
                 <SelectContent>
-                  {pacientes.map(paciente => (
-                    <SelectItem key={paciente.id} value={paciente.id.toString()}>
-                      {paciente.nombre} - {paciente.especie_nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                  {pacientes.map(paciente => {
+                    const especie = especies.find(esp => esp.id === paciente.especie_id);
+                    return(
+                      <SelectItem key={paciente.id} value={paciente.id.toString()}>
+                        {paciente.nombre} - {especie ? especie.nombre : 'Especie no encontrada'}
+                      </SelectItem>
+                    )
+                  })}
+              </SelectContent>
               </Select>
             </div>
             <div>
