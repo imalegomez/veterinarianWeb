@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import PanelVeterinario from './components/PanelVeterinario'
 import Pacientes from './pages/Pacientes'
-import Citas from './components/Citas'
+import Citas from './pages/Citas'
 import RegistrosMedicos from './components/RegistrosMedicos'
 
 const NavLink = ({ to, children, icon: Icon }) => {
